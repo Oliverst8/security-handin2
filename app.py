@@ -73,22 +73,22 @@ def notes():
             note = request.form['noteinput']
             db = connect_db()
             c = db.cursor()
-            statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,%s,'%s','%s',%s);""" %(session['userid'],time.strftime('%Y-%m-%d %H:%M:%S'),note,random.randrange(1000000000, 9999999999))
+            statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,?,?,?,?);""" 
             print(statement)
-            c.execute(statement)
+            c.execute(statement, (session['userid'],time.strftime('%Y-%m-%d %H:%M:%S'),note,random.randrange(1000000000, 9999999999)))
             db.commit()
             db.close()
         elif request.form['submit_button'] == 'import note':
             noteid = request.form['noteid']
             db = connect_db()
             c = db.cursor()
-            statement = """SELECT * from NOTES where publicID = %s""" %noteid
-            c.execute(statement)
+            statement = """SELECT * from NOTES where publicID = ?""" 
+            c.execute(statement, (noteid,))
             result = c.fetchall()
             if(len(result)>0):
                 row = result[0]
-                statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,%s,'%s','%s',%s);""" %(session['userid'],row[2],row[3],row[4])
-                c.execute(statement)
+                statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,?,?,?,?);""" 
+                c.execute(statement, (session['userid'],row[2],row[3],row[4]))
             else:
                 importerror="No such note with that ID!"
             db.commit()
@@ -96,9 +96,10 @@ def notes():
     
     db = connect_db()
     c = db.cursor()
-    statement = "SELECT * FROM notes WHERE assocUser = %s;" %session['userid']
+    statement = "SELECT * FROM notes WHERE assocUser = ?;"
     print(statement)
-    c.execute(statement)
+    print(session['userid'])
+    c.execute(statement, (session['userid'],))
     notes = c.fetchall()
     print(notes)
     
@@ -147,7 +148,7 @@ def register():
         #     errored = True
         #     passworderror = "That password is already in use by someone else!"
 
-        c.execute(user_statement, (username))
+        c.execute(user_statement, (username,))
         if(len(c.fetchall())>0):
             errored = True
             usererror = "That username is already in use by someone else!"
