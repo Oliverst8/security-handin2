@@ -36,6 +36,7 @@ INSERT INTO users VALUES(null,"admin", "8f42a3f29ce02a9aefc3bbcc0648a4cfd5c0b47f
 INSERT INTO users VALUES(null,"bernardo", "2b4c6d7f1e094cf8849dcf7499fa10a1d8d8c40edcf57af3a6e84c03213a9968");
 INSERT INTO notes VALUES(null,2,"1993-09-23 10:10:10","hello my friend",1234567890);
 INSERT INTO notes VALUES(null,2,"1993-09-23 12:10:10","i want lunch pls",1234567891);
+INSERT INTO notes VALUES(null,1,"2025-11-04 11:37:19","Look at this cool tool i found https://revshells.com",1234567892);
 
 """)
 
