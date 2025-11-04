@@ -252,7 +252,7 @@
     <div class="admin-container">
         <header class="admin-header">
             <button class="refresh-btn" onclick="location.reload()">🔄 Refresh</button>
-            <h1 class="admin-title">Admin Dashboard</h1>
+            <h1 class="admin-title">Admin Statistics</h1>
             <p class="admin-subtitle">SQL Database Statistics & Analytics</p>
         </header>
 
@@ -354,6 +354,26 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <div class="detailed-stats">
+            <div class="detailed-stats-header">
+                📁 Project File Analysis
+            </div>
+            <div style="padding: 2rem; text-align: center;">
+                <form method="POST" action="/admin/" style="margin-bottom: 2rem;">
+                    <button type="submit" name="check_files" value="tree" style="background: linear-gradient(45deg, #9b59b6, #8e44ad); color: white; border: none; padding: 1rem 2rem; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 5px 15px rgba(139, 69, 19, 0.3);">
+                        📊 Show Project Tree
+                    </button>
+                </form>
+
+                {% if file_output is not none %}
+                <div class="file-count-result" style="margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #74b9ff, #0984e3); color: white; border-radius: 15px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);">
+                    <h3 style="margin-bottom: 1rem; font-size: 2rem;">📁 Project Tree Structure</h3>
+                    <pre style="opacity: 0.9; font-size: 0.9rem; white-space: pre-wrap; overflow-x: auto; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; text-align: left;">{{ file_output }}</pre>
+                </div>
+                {% endif %}
+            </div>
         </div>
 
         <div style="text-align: center; padding: 2rem;">
