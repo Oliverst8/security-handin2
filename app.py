@@ -106,9 +106,9 @@ def notes():
     
     return render_template('notes.html',notes=notes,importerror=importerror)
 
-@app.route("/credits/", methods=('GET',))
-def credits():
-    return render_template('credits.html')
+@app.route("/skud-ud/", methods=('GET',))
+def skudud():
+    return render_template('skud-ud.html')
 
 @app.route("/login/", methods=('GET', 'POST'))
 def login():

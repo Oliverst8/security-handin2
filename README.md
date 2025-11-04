@@ -20,7 +20,7 @@ $ python3 app.py
 ``` 
 
 The project should run on port 5000 
-### Credits
+### skud-ud
 Emil Hørning for the code. 
 
 Alessandro Bruni for some flask specific functions.
