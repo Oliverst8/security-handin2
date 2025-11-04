@@ -186,6 +186,93 @@ def logout():
     session.clear()
     return redirect(url_for('index'))
 
+@app.route("/admin/")
+@login_required
+def admin():
+    """Admin dashboard with SQL statistics"""
+    # Check if user is admin
+    if session.get('username') != 'admin':
+        return redirect(url_for('notes'))
+    
+    db = connect_db()
+    c = db.cursor()
+    
+    # Get total users
+    c.execute("SELECT COUNT(*) FROM users")
+    total_users = c.fetchone()[0]
+    
+    # Get total notes
+    c.execute("SELECT COUNT(*) FROM notes")
+    total_notes = c.fetchone()[0]
+    
+    # Calculate average notes per user
+    if total_users > 0:
+        avg_notes_per_user = round(total_notes / total_users, 1)
+    else:
+        avg_notes_per_user = 0
+    
+    # Get database file size
+    import os
+    try:
+        db_size_bytes = os.path.getsize(app.database)
+        db_size_mb = round(db_size_bytes / (1024 * 1024), 2)
+        if db_size_mb < 1:
+            db_size = f"{round(db_size_bytes / 1024, 1)} KB"
+        else:
+            db_size = f"{db_size_mb} MB"
+    except:
+        db_size = "Unknown"
+        db_size_mb = 0
+    
+    # Get detailed user statistics
+    c.execute("""
+        SELECT u.id, u.username, COUNT(n.id) as note_count, MAX(n.dateWritten) as latest_note
+        FROM users u
+        LEFT JOIN notes n ON u.id = n.assocUser
+        GROUP BY u.id, u.username
+        ORDER BY note_count DESC
+    """)
+    user_details = []
+    for row in c.fetchall():
+        user_details.append({
+            'id': row[0],
+            'username': row[1],
+            'note_count': row[2],
+            'latest_note': row[3]
+        })
+    
+    # Get recent notes with usernames
+    c.execute("""
+        SELECT n.id, n.dateWritten, n.note, n.publicID, u.username
+        FROM notes n
+        JOIN users u ON n.assocUser = u.id
+        ORDER BY n.dateWritten DESC
+        LIMIT 10
+    """)
+    recent_notes = []
+    for row in c.fetchall():
+        recent_notes.append({
+            'id': row[0],
+            'dateWritten': row[1],
+            'note': row[2],
+            'publicID': row[3],
+            'username': row[4]
+        })
+    
+    db.close()
+    
+    stats = {
+        'total_users': total_users,
+        'total_notes': total_notes,
+        'avg_notes_per_user': avg_notes_per_user,
+        'db_size': db_size,
+        'db_size_mb': db_size_mb,
+        'user_details': user_details,
+        'recent_notes': recent_notes
+    }
+    
+    return render_template('admin.html', stats=stats)
+
 if __name__ == "__main__":
     #create database if it doesn't exist yet
     if not os.path.exists(app.database):  # pyright: ignore[reportAttributeAccessIssue]

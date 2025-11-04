@@ -138,6 +138,12 @@ ol, ul, dl {
   top: 30px;
 }
 
+.notes__admin {
+  position: absolute;
+  right: 350px;
+  top: 30px;
+}
+
 .notes__title-user {
   color: #14bf98;
   text-transform: capitalize;
@@ -267,6 +273,9 @@ ol, ul, dl {
       <section class="notes__background-image">
         <a href="/logout/" class="notes__logout btn-solid-lg">Logout</a>
         <a href="/skud-ud/" class="notes__skud-ud btn-solid-lg">Skud-ud</a>
+        {% if session['username'] == 'admin' %}
+          <a href="/admin/" class="notes__admin btn-solid-lg">Admin statistics</a>
+        {% endif %}
         <article class="notes__background-title-container">
           <h1 class="notes__title">Welcome</h1>
           <h2 class="notes__title-user">{{session['username']}}</h2>
