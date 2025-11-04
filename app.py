@@ -32,8 +32,8 @@ CREATE TABLE users (
     password TEXT NOT NULL
 );
 
-INSERT INTO users VALUES(null,"admin", "password");
-INSERT INTO users VALUES(null,"bernardo", "omgMPC");
+INSERT INTO users VALUES(null,"admin", "8f42a3f29ce02a9aefc3bbcc0648a4cfd5c0b47f39f68ac5a52d93de8b8e9e35");
+INSERT INTO users VALUES(null,"bernardo", "2b4c6d7f1e094cf8849dcf7499fa10a1d8d8c40edcf57af3a6e84c03213a9968");
 INSERT INTO notes VALUES(null,2,"1993-09-23 10:10:10","hello my friend",1234567890);
 INSERT INTO notes VALUES(null,2,"1993-09-23 12:10:10","i want lunch pls",1234567891);
 
@@ -76,7 +76,7 @@ def notes():
             c = db.cursor()
             statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,?,?,?,?);""" 
             print(statement)
-            c.execute(statement, (session['userid'],time.strftime('%Y-%m-%d %H:%M:%S'),note,random.randrange(1000000000, 9999999999)))
+            c.execute(statement, (session['userid'],time.strftime('%Y-%m-%d %H:%M:%S'),note,random.randrange(1000000000, 9999999999)))  # pyright: ignore[reportUnusedCallResult]
             db.commit()
             db.close()
         elif request.form['submit_button'] == 'import note':
@@ -84,12 +84,12 @@ def notes():
             db = connect_db()
             c = db.cursor()
             statement = """SELECT * from NOTES where publicID = ?""" 
-            c.execute(statement, (noteid,))
+            c.execute(statement, (noteid,))  # pyright: ignore[reportUnusedCallResult]
             result = c.fetchall()
             if(len(result)>0):
-                row = result[0]
+                row = result[0]  # pyright: ignore[reportAny]
                 statement = """INSERT INTO notes(id,assocUser,dateWritten,note,publicID) VALUES(null,?,?,?,?);""" 
-                c.execute(statement, (session['userid'],row[2],row[3],row[4]))
+                c.execute(statement, (session['userid'],row[2],row[3],row[4]))  # pyright: ignore[reportUnusedCallResult]
             else:
                 importerror="No such note with that ID!"
             db.commit()
@@ -99,8 +99,8 @@ def notes():
     c = db.cursor()
     statement = "SELECT * FROM notes WHERE assocUser = ?;"
     print(statement)
-    print(session['userid'])
-    c.execute(statement, (session['userid'],))
+    print(session['userid'])  # pyright: ignore[reportAny]
+    c.execute(statement, (session['userid'],))  # pyright: ignore[reportUnusedCallResult]
     notes = c.fetchall()
     print(notes)
     
@@ -118,6 +118,7 @@ def login():
         statement = "SELECT * FROM users WHERE username = ? AND password = ?;"
         c.execute(statement, (username, password))
         result = c.fetchall()
+        print(result)
 
         if len(result) > 0:
             session.clear()
@@ -184,13 +185,13 @@ def logout():
 
 if __name__ == "__main__":
     #create database if it doesn't exist yet
-    if not os.path.exists(app.database):
+    if not os.path.exists(app.database):  # pyright: ignore[reportAttributeAccessIssue]
         init_db()
     runport = 5000
     if(len(sys.argv)==2):
         runport = sys.argv[1]
     try:
-        app.run(host='0.0.0.0', port=runport) # runs on machine ip address to make it visible on netowrk
+        app.run(host='0.0.0.0', port=runport) # runs on machine ip address to make it visible on netowrk  # pyright: ignore[reportArgumentType]
     except:
         print("Something went wrong. the usage of the server is either")
         print("'python3 app.py' (to start on port 5000)")
