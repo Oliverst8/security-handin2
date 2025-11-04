@@ -132,6 +132,12 @@ ol, ul, dl {
   top: 30px;
 }
 
+.notes__credits {
+  position: absolute;
+  right: 200px;
+  top: 30px;
+}
+
 .notes__title-user {
   color: #14bf98;
   text-transform: capitalize;
@@ -260,6 +266,7 @@ ol, ul, dl {
     <body style="background-color:#fff;">
       <section class="notes__background-image">
         <a href="/logout/" class="notes__logout btn-solid-lg">Logout</a>
+        <a href="/credits/" class="notes__credits btn-solid-lg">Credits</a>
         <article class="notes__background-title-container">
           <h1 class="notes__title">Welcome</h1>
           <h2 class="notes__title-user">{{session['username']}}</h2>
